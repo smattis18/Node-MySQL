@@ -20,7 +20,6 @@ var connection = mysql.createConnection({
         };
         console.log("\n");
         placeOrder(res);
-        connection.end();
     });
 
   function placeOrder(res) {
@@ -45,15 +44,13 @@ var connection = mysql.createConnection({
         default: true
       }
     ]).then(function(inquirerResponse) {
-        console.log(res[inquirerResponse.item_id - 1].stock_quantity - inquirerResponse.item_quantity);
-        console.log(inquirerResponse.item_id);
-        //console.log(res[inquirerResponse.item_id - 1].stock_quantity);
+        //console.log(res[inquirerResponse.item_id - 1].stock_quantity - inquirerResponse.item_quantity);
+        //console.log(inquirerResponse.item_id);
         
             if (inquirerResponse.item_quantity > res[inquirerResponse.item_id - 1].stock_quantity) {
                 console.log("Insufficient stock!");
-                return;
             } else {
-                connection.query("UPDATE products SET ? WHERE ?",
+                connection.query("UPDATE products SET ? WHERE ?", 
                 [
                   {
                     stock_quantity: res[inquirerResponse.item_id - 1].stock_quantity - inquirerResponse.item_quantity
@@ -62,7 +59,11 @@ var connection = mysql.createConnection({
                     item_id: inquirerResponse.item_id
                   }
                 ],
-                function() {}); //this may have to be run as a separate function
+                function(err, res) {
+                  if (err) throw err;
+                });
+                console.log("Your order total is: $" + inquirerResponse.item_quantity * res[inquirerResponse.item_id - 1].price);
+                connection.end();
             };
     });
   };
