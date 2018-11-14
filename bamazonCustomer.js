@@ -29,12 +29,12 @@ var connection = mysql.createConnection({
     .prompt([
       {
         type: "input",
-        message: "Enter the item id for your first item:",
+        message: "Enter the item id for your item:",
         name: "item_id"
       },
       {
         type: "input",
-        message: "Enter the quantity for your first item:",
+        message: "Enter the quantity for your item:",
         name: "item_quantity"
       },
       {
@@ -44,11 +44,11 @@ var connection = mysql.createConnection({
         default: true
       }
     ]).then(function(inquirerResponse) {
-        //console.log(res[inquirerResponse.item_id - 1].stock_quantity - inquirerResponse.item_quantity);
-        //console.log(inquirerResponse.item_id);
+          if (inquirerResponse.confirm) {
         
             if (inquirerResponse.item_quantity > res[inquirerResponse.item_id - 1].stock_quantity) {
                 console.log("Insufficient stock!");
+                connection.end();
             } else {
                 connection.query("UPDATE products SET ? WHERE ?", 
                 [
@@ -62,8 +62,15 @@ var connection = mysql.createConnection({
                 function(err, res) {
                   if (err) throw err;
                 });
-                console.log("Your order total is: $" + inquirerResponse.item_quantity * res[inquirerResponse.item_id - 1].price);
+                var total = inquirerResponse.item_quantity * res[inquirerResponse.item_id - 1].price;
+                total = total.toFixed(2);
+                console.log("\nYour order total is: $" + total);
                 connection.end();
             };
+
+          } else {
+              console.log("\nThanks for visiting, please come back once you have decided.");
+              connection.end();
+          };
     });
   };
