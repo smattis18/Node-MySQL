@@ -12,6 +12,7 @@ This app utilizes the node package "mysql" in order to establish database connec
 2. Read the displayed inventory and choose an item to order.
 3. Enter the item's item number when prompted.
 4. Enter the item quantity when prompted.
+
 ** If item quantity entered exceeds item stock, you will receive a message and the app will end.  You will then need to restart the app.
 
 ### Watch the App in Action!
